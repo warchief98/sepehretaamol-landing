@@ -17,7 +17,7 @@
                     <template #title>Navigation One</template>
                         <a-tree
                             v-model:expandedKeys="expandedKeys"
-                            v-model:selectedKeys2="selectedKeys2"
+                            v-model:selectedKeys="selectedKeys"
                             v-model:checkedKeys="checkedKeys"
                             checkable
                             :tree-data="treeData"
@@ -73,45 +73,39 @@
 <script setup>
     import MobileCard from '@/views/landing/components/StoreCard.vue'
     import { DATA_MOB } from '@/data/MOBILE_DATA'
-    import {  ref, watch, onMounted } from 'vue'
+    import {  ref, watch, onMounted, reactive } from 'vue'
 
 
     /*
         ___________________________________________mobiles data
     */
-    let mobileData = ref(DATA_MOB)
+    const mobileData = reactive(DATA_MOB)
 
-    let mobileDataTemp = ref(mobileData)
-
+    const mobileDataTemp = ref(mobileData)
     
 
     const submit = () => {
-        // console.log(checkedKeys.value)
-        // console.log('mobile dATA:', mobileData)
-        mobileDataTemp.value = mobileData.value.filter((e) => {
-            if(
-                checkedKeys.value.forEach((filter) => {
-                // console.log("filterrrr:::::",filter)
-                // console.log("element:::::",e.brand)
-                if(e.brand == filter){
-                    // console.log('eeeeeee:::', e)
-                    return true
-                }
+        const template = mobileData
+
+        console.log('DATA', template)
+
+        if(checkedKeys.value.find(x => x == '0-0')){
+            mobileDataTemp.value = mobileData
+        }
+        else{
+            checkedKeys.value.forEach(item => {
+                mobileDataTemp.value = template.filter((e) => {
+                    if(e.brand == item){
+                        return e
+                    }
+                })
             })
-            ){
-                return e
-            }
+        }
 
-
-            // for(let i in checkedKeys.value){
-            //     console.log('i value is:', i)
-            //     console.log("eeeeeeeeeeeeeeeee",e)
-            //     if(e.brand == checkedKeys.value[i]){
-            //         return e
-            //     }
-            // }
-        })
-        console.log('availableData',mobileDataTemp)
+        // console.log(checkedKeys._rawValue)
+        // console.log('mobile dATA:', mobileData)
+        
+        console.log('availableData',mobileDataTemp.value)
     }
 
 
@@ -139,13 +133,13 @@
     const selectedKeys2 = ref(['']);
     const checkedKeys = ref(['']);
     watch(expandedKeys, () => {
-      console.log('expandedKeys', expandedKeys);
+    //   console.log('expandedKeys', expandedKeys);
     });
     watch(selectedKeys2, () => {
       console.log('selectedKeys2', selectedKeys2);
     });
     watch(checkedKeys, () => {
-      console.log('checkedKeys', checkedKeys);
+      console.log('checkedKeys', checkedKeys._rawValue);
     });
     const treeData = [{
         title: 'برند',
